@@ -1,0 +1,582 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}SchoolKart Management Dashboard ⚙️{% endblock %}
+
+{% block content %}
+<!-- Admin Dashboard Banner -->
+<section class="admin-dash-banner">
+    <div class="container">
+        <div class="admin-banner-flex">
+            <div>
+                <div class="breadcrumb-trail">
+                    <a href="{% url 'home' %}">Home</a>
+                    <span class="bc-sep">/</span>
+                    <span class="bc-current">Admin Management Dashboard</span>
+                </div>
+                <h1 class="admin-dash-title">
+                    SchoolKart <span class="gradient-text">Admin Portal</span> ⚙️
+                </h1>
+                <p class="admin-dash-subtitle">
+                    Manage school product inventory, categories, student orders, customer accounts & stock alerts.
+                </p>
+            </div>
+            <div class="admin-badge-box">
+                <span class="admin-user-pill">🛡️ Staff Admin: <strong>{{ user.username }}</strong></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Admin Navigation Tabs -->
+<section class="admin-nav-tabs-section">
+    <div class="container">
+        <div class="admin-tabs-bar">
+            <a href="{% url 'admin_dashboard' %}?tab=overview" class="admin-tab-item {% if tab == 'overview' %}active{% endif %}">
+                <span>📊 Overview</span>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?tab=products" class="admin-tab-item {% if tab == 'products' %}active{% endif %}">
+                <span>📦 Products ({{ total_products }})</span>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?tab=categories" class="admin-tab-item {% if tab == 'categories' %}active{% endif %}">
+                <span>🏷️ Categories ({{ total_categories }})</span>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?tab=orders" class="admin-tab-item {% if tab == 'orders' %}active{% endif %}">
+                <span>🛒 Orders ({{ total_orders }})</span>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?tab=users" class="admin-tab-item {% if tab == 'users' %}active{% endif %}">
+                <span>👥 Users ({{ total_users }})</span>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?tab=lowstock" class="admin-tab-item tab-warning {% if tab == 'lowstock' %}active{% endif %}">
+                <span>⚠️ Low Stock ({{ low_stock_count }})</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Admin Main Content Area -->
+<section class="admin-main-section">
+    <div class="container">
+
+        <!-- ===================================================================
+             TAB 1: OVERVIEW
+             =================================================================== -->
+        {% if tab == 'overview' %}
+            <!-- Summary Metric Cards Grid -->
+            <div class="admin-metric-cards-grid">
+                <!-- Products Metric -->
+                <div class="metric-card metric-purple">
+                    <div class="metric-icon-wrap">📦</div>
+                    <div class="metric-info">
+                        <span class="metric-label">Total Products</span>
+                        <h2 class="metric-value">{{ total_products }}</h2>
+                        <a href="{% url 'admin_dashboard' %}?tab=products" class="metric-link">Manage Products →</a>
+                    </div>
+                </div>
+
+                <!-- Categories Metric -->
+                <div class="metric-card metric-pink">
+                    <div class="metric-icon-wrap">🏷️</div>
+                    <div class="metric-info">
+                        <span class="metric-label">Total Categories</span>
+                        <h2 class="metric-value">{{ total_categories }}</h2>
+                        <a href="{% url 'admin_dashboard' %}?tab=categories" class="metric-link">Manage Categories →</a>
+                    </div>
+                </div>
+
+                <!-- Orders Metric -->
+                <div class="metric-card metric-blue">
+                    <div class="metric-icon-wrap">🛒</div>
+                    <div class="metric-info">
+                        <span class="metric-label">Total Orders</span>
+                        <h2 class="metric-value">{{ total_orders }}</h2>
+                        <a href="{% url 'admin_dashboard' %}?tab=orders" class="metric-link">Manage Orders →</a>
+                    </div>
+                </div>
+
+                <!-- Users Metric -->
+                <div class="metric-card metric-violet">
+                    <div class="metric-icon-wrap">👥</div>
+                    <div class="metric-info">
+                        <span class="metric-label">Total Users</span>
+                        <h2 class="metric-value">{{ total_users }}</h2>
+                        <a href="{% url 'admin_dashboard' %}?tab=users" class="metric-link">View Users →</a>
+                    </div>
+                </div>
+
+                <!-- Low Stock Metric -->
+                <div class="metric-card metric-amber">
+                    <div class="metric-icon-wrap">⚠️</div>
+                    <div class="metric-info">
+                        <span class="metric-label">Low Stock (< 5)</span>
+                        <h2 class="metric-value">{{ low_stock_count }}</h2>
+                        <a href="{% url 'admin_dashboard' %}?tab=lowstock" class="metric-link">Restock Items →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overview Two Column Section -->
+            <div class="admin-overview-grid">
+                <!-- Recent Orders Preview -->
+                <div class="admin-panel-card">
+                    <div class="panel-header-flex">
+                        <h3 class="panel-title">🛒 Recent Customer Orders</h3>
+                        <a href="{% url 'admin_dashboard' %}?tab=orders" class="btn btn-outline btn-sm">View All Orders</a>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders_list|slice:":5" %}
+                                    <tr>
+                                        <td><strong>#{{ order.id }}</strong></td>
+                                        <td>{{ order.full_name|default:order.user.username }}</td>
+                                        <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                        <td><strong>₹{{ order.total_amount }}</strong></td>
+                                        <td>
+                                            <span class="order-status-pill status-{{ order.status|lower }}">{{ order.status }}</span>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">No customer orders placed yet.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Low Stock Alerts Panel -->
+                <div class="admin-panel-card">
+                    <div class="panel-header-flex">
+                        <h3 class="panel-title">⚠️ Low Stock Inventory Alert</h3>
+                        <a href="{% url 'admin_dashboard' %}?tab=lowstock" class="btn btn-outline btn-sm">Full Inventory</a>
+                    </div>
+
+                    <div class="low-stock-items-list">
+                        {% for prod in low_stock_products|slice:":5" %}
+                            <div class="low-stock-alert-item">
+                                <div class="low-stock-icon">⚠️</div>
+                                <div class="low-stock-details">
+                                    <h4 class="low-stock-name">{{ prod.name }}</h4>
+                                    <span class="low-stock-meta">Category: {{ prod.category.name }} • Price: ₹{{ prod.price }}</span>
+                                </div>
+                                <div class="low-stock-badge-wrap">
+                                    <span class="badge-low-stock">Low Stock ({{ prod.stock }})</span>
+                                    <a href="{% url 'admin_dashboard' %}?tab=products&edit_product={{ prod.id }}" class="btn btn-primary btn-sm">Restock</a>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="all-stocked-card">
+                                <span class="stocked-emoji">✅</span>
+                                <h4>All Products Well Stocked</h4>
+                                <p>No products currently have stock below 5 units.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        <!-- ===================================================================
+             TAB 2: PRODUCTS MANAGEMENT
+             =================================================================== -->
+        {% elif tab == 'products' %}
+            <div class="admin-panel-card">
+                <div class="panel-header-flex">
+                    <div>
+                        <h2 class="panel-title">📦 Product Management</h2>
+                        <p class="panel-subtitle">Add, edit, delete school supplies and update prices/inventory</p>
+                    </div>
+                    {% if not edit_product %}
+                        <button type="button" class="btn btn-primary" onclick="toggleAddProductForm()">+ Add New Product</button>
+                    {% endif %}
+                </div>
+
+                <!-- Add/Edit Product Form Card -->
+                <div class="admin-form-panel {% if edit_product %}active{% endif %}" id="product-form-box" {% if not edit_product %}style="display:none;"{% endif %}>
+                    <h3 class="form-panel-title">
+                        {% if edit_product %}✏️ Edit Product: {{ edit_product.name }}{% else %}➕ Add New Product{% endif %}
+                    </h3>
+
+                    <form action="{% if edit_product %}{% url 'admin_product_edit' edit_product.id %}{% else %}{% url 'admin_product_add' %}{% endif %}" method="POST" class="admin-form">
+                        {% csrf_token %}
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Product Name *</label>
+                                <input type="text" name="name" required placeholder="e.g. NCERT Class 11 Physics Book" class="form-input" value="{{ edit_product.name|default:'' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Category *</label>
+                                <select name="category_id" required class="form-input">
+                                    <option value="">-- Select Category --</option>
+                                    {% for cat in categories_list %}
+                                        <option value="{{ cat.id }}" {% if edit_product and edit_product.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Price (₹) *</label>
+                                <input type="number" step="0.01" name="price" required placeholder="e.g. 499.00" class="form-input" value="{{ edit_product.price|default:'' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Warehouse Stock Units *</label>
+                                <input type="number" name="stock" required placeholder="e.g. 50" class="form-input" value="{{ edit_product.stock|default:'' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Product Description</label>
+                            <textarea name="description" rows="3" placeholder="Enter specifications, grade level, or material details..." class="form-input form-textarea">{{ edit_product.description|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-action-row">
+                            <button type="submit" class="btn btn-primary">
+                                {% if edit_product %}💾 Save Product Changes{% else %}✨ Create Product{% endif %}
+                            </button>
+                            {% if edit_product %}
+                                <a href="{% url 'admin_dashboard' %}?tab=products" class="btn btn-outline">Cancel Edit</a>
+                            {% else %}
+                                <button type="button" class="btn btn-outline" onclick="toggleAddProductForm()">Cancel</button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Products Table -->
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for prod in products_list %}
+                                <tr>
+                                    <td>#{{ prod.id }}</td>
+                                    <td>
+                                        <strong><a href="{% url 'product_detail' prod.id %}" target="_blank">{{ prod.name }}</a></strong>
+                                    </td>
+                                    <td><span class="cat-pill">{{ prod.category.name }}</span></td>
+                                    <td><strong>₹{{ prod.price }}</strong></td>
+                                    <td>
+                                        {% if prod.stock < 5 %}
+                                            <span class="badge-low-stock">Low Stock ({{ prod.stock }})</span>
+                                        {% else %}
+                                            <span class="badge-in-stock">{{ prod.stock }} units</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><small class="table-desc-snippet">{{ prod.description|truncatewords:10 }}</small></td>
+                                    <td>
+                                        <div class="table-actions-group">
+                                            <a href="{% url 'admin_dashboard' %}?tab=products&edit_product={{ prod.id }}" class="action-btn edit-btn" title="Edit Product">✏️ Edit</a>
+                                            <a href="{% url 'admin_product_delete' prod.id %}" class="action-btn delete-btn" onclick="return confirm('Are you sure you want to delete this product?')" title="Delete Product">🗑️ Delete</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">No products in catalog yet. Click "+ Add New Product" above.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        <!-- ===================================================================
+             TAB 3: CATEGORIES MANAGEMENT
+             ================================================================== -->
+        {% elif tab == 'categories' %}
+            <div class="admin-panel-card">
+                <div class="panel-header-flex">
+                    <div>
+                        <h2 class="panel-title">🏷️ Category Management</h2>
+                        <p class="panel-subtitle">Create, update and organize product categories</p>
+                    </div>
+                </div>
+
+                <!-- Add / Edit Category Form Box -->
+                <div class="admin-category-form-box">
+                    <h3 class="form-panel-title">
+                        {% if edit_category %}✏️ Edit Category: {{ edit_category.name }}{% else %}➕ Add New Category{% endif %}
+                    </h3>
+
+                    <form action="{% if edit_category %}{% url 'admin_category_edit' edit_category.id %}{% else %}{% url 'admin_category_add' %}{% endif %}" method="POST" class="inline-add-cat-form">
+                        {% csrf_token %}
+                        <input type="text" name="name" required placeholder="Category name (e.g. Art & Crafts, School Shoes...)" class="form-input" value="{{ edit_category.name|default:'' }}">
+                        <button type="submit" class="btn btn-primary">
+                            {% if edit_category %}Save Category{% else %}+ Add Category{% endif %}
+                        </button>
+                        {% if edit_category %}
+                            <a href="{% url 'admin_dashboard' %}?tab=categories" class="btn btn-outline">Cancel</a>
+                        {% endif %}
+                    </form>
+                </div>
+
+                <!-- Categories Table -->
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Category Name</th>
+                                <th>Total Products</th>
+                                <th>Storefront Link</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cat in categories_list %}
+                                <tr>
+                                    <td>#{{ cat.id }}</td>
+                                    <td><strong>{{ cat.name }}</strong></td>
+                                    <td><span class="badge-count">{{ cat.prod_count }} Products</span></td>
+                                    <td>
+                                        <a href="{% url 'products' %}?category={{ cat.name }}" target="_blank" class="catalog-view-link">View in Catalog ↗</a>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions-group">
+                                            <a href="{% url 'admin_dashboard' %}?tab=categories&edit_cat={{ cat.id }}" class="action-btn edit-btn">✏️ Edit</a>
+                                            <a href="{% url 'admin_category_delete' cat.id %}" class="action-btn delete-btn" onclick="return confirm('Deleting category will also delete its products. Proceed?')">🗑️ Delete</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">No categories created yet.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        <!-- ===================================================================
+             TAB 4: ORDERS MANAGEMENT
+             =================================================================== -->
+        {% elif tab == 'orders' %}
+            <div class="admin-panel-card">
+                <div class="panel-header-flex">
+                    <div>
+                        <h2 class="panel-title">🛒 Order Management</h2>
+                        <p class="panel-subtitle">Review school orders, customer shipping details and update live fulfillment statuses</p>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer & Phone</th>
+                                <th>Shipping Address</th>
+                                <th>Items Ordered</th>
+                                <th>Total Amount</th>
+                                <th>Order Date</th>
+                                <th>Current Status</th>
+                                <th>Update Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders_list %}
+                                <tr>
+                                    <td><strong>#{{ order.id }}</strong></td>
+                                    <td>
+                                        <strong>{{ order.full_name }}</strong><br>
+                                        <small class="text-muted">👤 {{ order.user.username }} • 📞 {{ order.phone_number }}</small>
+                                    </td>
+                                    <td>
+                                        <small>{{ order.address }}, {{ order.city }}, {{ order.state }} - {{ order.pincode }}</small>
+                                    </td>
+                                    <td>
+                                        <ul class="order-items-mini-list">
+                                            {% for item in order.items.all %}
+                                                <li>{{ item.quantity }} × {{ item.product_name }} (₹{{ item.price }})</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td><strong>₹{{ order.total_amount }}</strong></td>
+                                    <td><small>{{ order.created_at|date:"M d, Y h:i A" }}</small></td>
+                                    <td>
+                                        <span class="order-status-pill status-{{ order.status|lower }}">{{ order.status }}</span>
+                                    </td>
+                                    <td>
+                                        <form action="{% url 'admin_order_status_update' order.id %}" method="POST" class="inline-status-form">
+                                            {% csrf_token %}
+                                            <select name="status" class="status-select-input">
+                                                {% for status_val, status_name in status_choices %}
+                                                    <option value="{{ status_val }}" {% if order.status == status_val %}selected{% endif %}>
+                                                        {{ status_name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" class="btn btn-primary btn-sm status-update-btn">Update</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">No customer orders have been placed yet.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        <!-- ===================================================================
+             TAB 5: USERS MANAGEMENT
+             =================================================================== -->
+        {% elif tab == 'users' %}
+            <div class="admin-panel-card">
+                <div class="panel-header-flex">
+                    <div>
+                        <h2 class="panel-title">👥 User Management</h2>
+                        <p class="panel-subtitle">View all registered students, parents, and administrative staff accounts</p>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Date Joined</th>
+                                <th>Account Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in users_list %}
+                                <tr>
+                                    <td>#{{ u.id }}</td>
+                                    <td><strong>{{ u.username }}</strong></td>
+                                    <td>{{ u.email|default:"No email provided" }}</td>
+                                    <td>
+                                        {% if u.is_superuser %}
+                                            <span class="role-badge role-superuser">👑 Superadmin</span>
+                                        {% elif u.is_staff %}
+                                            <span class="role-badge role-staff">🛡️ Staff Admin</span>
+                                        {% else %}
+                                            <span class="role-badge role-student">🎒 Student / Parent</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ u.date_joined|date:"M d, Y h:i A" }}</td>
+                                    <td>
+                                        {% if u.is_active %}
+                                            <span class="badge-active-user">✓ Active</span>
+                                        {% else %}
+                                            <span class="badge-inactive-user">✕ Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">No users registered in system.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        <!-- ===================================================================
+             TAB 6: LOW STOCK INVENTORY
+             =================================================================== -->
+        {% elif tab == 'lowstock' %}
+            <div class="admin-panel-card">
+                <div class="panel-header-flex">
+                    <div>
+                        <h2 class="panel-title">⚠️ Low Stock Products (< 5 Units)</h2>
+                        <p class="panel-subtitle">Critical warehouse inventory requiring immediate restock order</p>
+                    </div>
+                </div>
+
+                {% if low_stock_products %}
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Current Stock</th>
+                                    <th>Warning Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prod in low_stock_products %}
+                                    <tr>
+                                        <td>#{{ prod.id }}</td>
+                                        <td><strong>{{ prod.name }}</strong></td>
+                                        <td><span class="cat-pill">{{ prod.category.name }}</span></td>
+                                        <td><strong>₹{{ prod.price }}</strong></td>
+                                        <td>
+                                            <span class="badge-low-stock-critical">{{ prod.stock }} units left</span>
+                                        </td>
+                                        <td>
+                                            <span class="low-stock-pulse-warning">⚠️ Low Stock</span>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'admin_dashboard' %}?tab=products&edit_product={{ prod.id }}" class="btn btn-primary btn-sm">
+                                                Update Stock 📦
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="all-stocked-card-large">
+                        <span class="stocked-emoji">🎉</span>
+                        <h3>All School Products are Well Stocked!</h3>
+                        <p>No products currently have inventory below 5 units. Everything is ready for student orders.</p>
+                        <a href="{% url 'admin_dashboard' %}?tab=products" class="btn btn-outline">View All Inventory</a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+<script>
+function toggleAddProductForm() {
+    var box = document.getElementById('product-form-box');
+    if (box) {
+        if (box.style.display === 'none' || box.style.display === '') {
+            box.style.display = 'block';
+        } else {
+            box.style.display = 'none';
+        }
+    }
+}
+</script>
+{% endblock %}

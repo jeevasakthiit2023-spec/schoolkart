@@ -1,0 +1,251 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - SchoolKart 🛒{% endblock %}
+
+{% block content %}
+<!-- Product Detail Breadcrumbs -->
+<div class="detail-breadcrumb-section">
+    <div class="container">
+        <div class="breadcrumb-trail">
+            <a href="{% url 'home' %}">Home</a>
+            <span class="bc-sep">/</span>
+            <a href="{% url 'products' %}">Products</a>
+            <span class="bc-sep">/</span>
+            <a href="{% url 'products' %}?category={{ product.category.name }}">{{ product.category.name }}</a>
+            <span class="bc-sep">/</span>
+            <span class="bc-current">{{ product.name|truncatechars:35 }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Product Showcase Section -->
+<section class="product-detail-main-section">
+    <div class="container">
+        <div class="product-detail-grid">
+            <!-- Product Visual Column -->
+            <div class="product-detail-visual-col">
+                <div class="detail-image-card 
+                    {% if 'book' in product.category.name|lower %}cat-bg-purple
+                    {% elif 'bag' in product.category.name|lower %}cat-bg-pink
+                    {% elif 'stationery' in product.category.name|lower %}cat-bg-blue
+                    {% elif 'uniform' in product.category.name|lower %}cat-bg-violet
+                    {% else %}cat-bg-cyan{% endif %}">
+                    
+                    <span class="detail-category-badge">
+                        {{ product.category.name }}
+                    </span>
+
+                    <div class="detail-product-large-icon">
+                        {% if 'book' in product.category.name|lower %}📚
+                        {% elif 'bag' in product.category.name|lower %}🎒
+                        {% elif 'stationery' in product.category.name|lower %}✏️
+                        {% elif 'uniform' in product.category.name|lower %}👕
+                        {% elif 'access' in product.category.name|lower %}🎨
+                        {% else %}📦{% endif %}
+                    </div>
+
+                    <div class="detail-badge-pill">
+                        <span>✨ Genuine School Certified</span>
+                    </div>
+                </div>
+
+                <!-- Trust Highlights Under Visual -->
+                <div class="detail-trust-mini-grid">
+                    <div class="trust-mini-item">
+                        <span class="t-icon">🚚</span>
+                        <div>
+                            <strong>Free Delivery</strong>
+                            <small>On orders above ₹499</small>
+                        </div>
+                    </div>
+                    <div class="trust-mini-item">
+                        <span class="t-icon">🔄</span>
+                        <div>
+                            <strong>7-Day Returns</strong>
+                            <small>Hassle-free exchange</small>
+                        </div>
+                    </div>
+                    <div class="trust-mini-item">
+                        <span class="t-icon">💯</span>
+                        <div>
+                            <strong>100% Authentic</strong>
+                            <small>Verified school publisher</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Information & Purchase Column -->
+            <div class="product-detail-info-col">
+                <div class="detail-header-info">
+                    <div class="detail-cat-tag">
+                        <span>{{ product.category.name|upper }}</span>
+                    </div>
+                    <h1 class="detail-product-title">{{ product.name }}</h1>
+
+                    <div class="detail-rating-row">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-val">4.8 / 5.0</span>
+                        <span class="review-count">(142 student & parent reviews)</span>
+                    </div>
+                </div>
+
+                <!-- Pricing Box -->
+                <div class="detail-pricing-box">
+                    <div class="detail-price-current">
+                        <span class="currency-symbol">₹</span>
+                        <span class="price-number">{{ product.price }}</span>
+                    </div>
+                    <div class="detail-mrp-group">
+                        <span class="mrp-strikethrough">MRP: ₹{{ product.price|floatformat:0|add:"250" }}</span>
+                        <span class="discount-badge">Save Special Discount</span>
+                    </div>
+                    <p class="tax-note">Inclusive of all taxes & academic packaging</p>
+                </div>
+
+                <!-- Stock Status Indicator -->
+                <div class="detail-stock-status-row">
+                    {% if product.stock > 0 %}
+                        <div class="stock-status in-stock">
+                            <span class="status-dot green-dot"></span>
+                            <span><strong>In Stock</strong> — {{ product.stock }} units left in warehouse</span>
+                        </div>
+                    {% else %}
+                        <div class="stock-status out-of-stock">
+                            <span class="status-dot red-dot"></span>
+                            <span><strong>Out of Stock</strong> — Currently restocking</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Product Description Box -->
+                <div class="detail-desc-box">
+                    <h3 class="desc-heading">Product Overview</h3>
+                    <p class="detail-desc-text">{{ product.description }}</p>
+                </div>
+
+                <!-- Key Academic Features -->
+                <div class="detail-key-features">
+                    <h4 class="features-heading">Key Specifications</h4>
+                    <ul class="features-bullets">
+                        <li><strong>Category:</strong> {{ product.category.name }}</li>
+                        <li><strong>Target:</strong> Primary, Secondary & Higher Secondary Students</li>
+                        <li><strong>Quality Grade:</strong> Certified Academic Standard</li>
+                        <li><strong>Availability:</strong> Ready to dispatch within 24 hours</li>
+                    </ul>
+                </div>
+
+                <!-- Add To Cart & Purchase Form -->
+                <form action="{% url 'add_to_cart' product.id %}" method="POST" class="detail-purchase-form">
+                    {% csrf_token %}
+                    <div class="purchase-controls-row">
+                        <!-- Quantity Picker -->
+                        <div class="quantity-picker-wrapper">
+                            <label for="quantity-input" class="qty-label">Quantity:</label>
+                            <div class="qty-selector">
+                                <button type="button" class="qty-btn" onclick="decrementQty()">-</button>
+                                <input type="number" name="quantity" id="quantity-input" value="1" min="1" max="{{ product.stock|default:99 }}" class="qty-input">
+                                <button type="button" class="qty-btn" onclick="incrementQty()">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="purchase-buttons-group">
+                            <button type="submit" class="btn btn-primary btn-lg add-to-cart-submit-btn" {% if product.stock == 0 %}disabled{% endif %}>
+                                <span>🛒 Add to Cart</span>
+                            </button>
+                            <button type="submit" name="buy_now" value="true" class="btn btn-outline btn-lg buy-now-btn" {% if product.stock == 0 %}disabled{% endif %}>
+                                <span>⚡ Buy Now</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products Section -->
+{% if related_products %}
+<section class="related-products-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Similar Essentials</span>
+            <h2 class="section-title">You May Also Need</h2>
+            <p class="section-subtitle">Frequently bundled items from {{ product.category.name }}</p>
+        </div>
+
+        <div class="products-cards-grid">
+            {% for rel_prod in related_products %}
+                <div class="product-item-card">
+                    <div class="product-item-top 
+                        {% if 'book' in rel_prod.category.name|lower %}cat-bg-purple
+                        {% elif 'bag' in rel_prod.category.name|lower %}cat-bg-pink
+                        {% elif 'stationery' in rel_prod.category.name|lower %}cat-bg-blue
+                        {% elif 'uniform' in rel_prod.category.name|lower %}cat-bg-violet
+                        {% else %}cat-bg-cyan{% endif %}">
+                        
+                        <span class="product-item-category">{{ rel_prod.category.name }}</span>
+                        
+                        <div class="product-item-icon">
+                            {% if 'book' in rel_prod.category.name|lower %}📚
+                            {% elif 'bag' in rel_prod.category.name|lower %}🎒
+                            {% elif 'stationery' in rel_prod.category.name|lower %}✏️
+                            {% elif 'uniform' in rel_prod.category.name|lower %}👕
+                            {% elif 'access' in rel_prod.category.name|lower %}🎨
+                            {% else %}📦{% endif %}
+                        </div>
+
+                        {% if rel_prod.stock > 0 %}
+                            <span class="stock-tag in-stock">In Stock</span>
+                        {% else %}
+                            <span class="stock-tag out-of-stock">Out of Stock</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="product-item-body">
+                        <h3 class="product-item-title">
+                            <a href="{% url 'product_detail' rel_prod.id %}">{{ rel_prod.name }}</a>
+                        </h3>
+                        <p class="product-item-desc">{{ rel_prod.description|truncatewords:14 }}</p>
+
+                        <div class="product-item-footer">
+                            <div class="product-price-box">
+                                <span class="price-currency">₹</span>
+                                <span class="price-value">{{ rel_prod.price }}</span>
+                            </div>
+                            
+                            <a href="{% url 'product_detail' rel_prod.id %}" class="btn btn-outline btn-sm">
+                                <span>View Details →</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<script>
+function incrementQty() {
+    var input = document.getElementById('quantity-input');
+    var max = parseInt(input.getAttribute('max')) || 99;
+    var val = parseInt(input.value) || 1;
+    if (val < max) {
+        input.value = val + 1;
+    }
+}
+function decrementQty() {
+    var input = document.getElementById('quantity-input');
+    var val = parseInt(input.value) || 1;
+    if (val > 1) {
+        input.value = val - 1;
+    }
+}
+</script>
+{% endblock %}
+<a href="{% url 'add_to_wishlist' product.id %}">
+    ❤️ Add to Wishlist
+</a>

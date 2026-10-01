@@ -1,0 +1,233 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}My Shopping Cart - SchoolKart 🛒{% endblock %}
+
+{% block content %}
+<!-- Cart Page Banner -->
+<section class="cart-banner-section">
+    <div class="container">
+        <div class="cart-header-wrap">
+            <div class="breadcrumb-trail">
+                <a href="{% url 'home' %}">Home</a>
+                <span class="bc-sep">/</span>
+                <a href="{% url 'products' %}">Products</a>
+                <span class="bc-sep">/</span>
+                <span class="bc-current">Shopping Cart</span>
+            </div>
+            <h1 class="cart-page-title">
+                My Shopping <span class="gradient-text">Cart</span> 🛒
+            </h1>
+            <p class="cart-page-subtitle">
+                Review your selected school textbooks, stationery, uniform pieces, and classroom accessories.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Cart Content Section -->
+<section class="cart-main-section">
+    <div class="container">
+        {% if cart_items %}
+            <div class="cart-layout-grid">
+                <!-- Cart Items Table / List Column -->
+                <div class="cart-items-column">
+                    <div class="cart-table-card">
+                        <div class="cart-table-header">
+                            <span class="col-prod">Product</span>
+                            <span class="col-price">Price</span>
+                            <span class="col-qty">Quantity</span>
+                            <span class="col-subtotal">Subtotal</span>
+                            <span class="col-action"></span>
+                        </div>
+
+                        <div class="cart-items-list">
+                            {% for item in cart_items %}
+                                <div class="cart-item-row">
+                                    <!-- Product Info -->
+                                    <div class="cart-prod-info">
+                                        <div class="cart-prod-thumb 
+                                            {% if 'book' in item.product.category.name|lower %}cat-bg-purple
+                                            {% elif 'bag' in item.product.category.name|lower %}cat-bg-pink
+                                            {% elif 'stationery' in item.product.category.name|lower %}cat-bg-blue
+                                            {% elif 'uniform' in item.product.category.name|lower %}cat-bg-violet
+                                            {% else %}cat-bg-cyan{% endif %}">
+                                            
+                                            {% if 'book' in item.product.category.name|lower %}📚
+                                            {% elif 'bag' in item.product.category.name|lower %}🎒
+                                            {% elif 'stationery' in item.product.category.name|lower %}✏️
+                                            {% elif 'uniform' in item.product.category.name|lower %}👕
+                                            {% elif 'access' in item.product.category.name|lower %}🎨
+                                            {% else %}📦{% endif %}
+                                        </div>
+
+                                        <div class="cart-prod-text">
+                                            <span class="cart-cat-badge">{{ item.product.category.name }}</span>
+                                            <h3 class="cart-prod-name">
+                                                <a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a>
+                                            </h3>
+                                            <small class="cart-stock-hint">
+                                                {% if item.product.stock > 0 %}
+                                                    <span class="stock-dot green-dot"></span> In Stock
+                                                {% else %}
+                                                    <span class="stock-dot red-dot"></span> Out of Stock
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <!-- Price -->
+                                    <div class="cart-price-cell">
+                                        <span class="mobile-label">Price:</span>
+                                        <span class="cell-price">₹{{ item.product.price }}</span>
+                                    </div>
+
+                                    <!-- Quantity Controller -->
+                                    <div class="cart-qty-cell">
+                                        <span class="mobile-label">Quantity:</span>
+                                        <div class="cart-qty-controller">
+                                            <form action="{% url 'update_cart' item.product.id %}" method="POST" class="qty-form-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="decrease">
+                                                <button type="submit" class="cart-qty-btn" title="Decrease quantity">-</button>
+                                            </form>
+
+                                            <span class="cart-qty-value">{{ item.quantity }}</span>
+
+                                            <form action="{% url 'update_cart' item.product.id %}" method="POST" class="qty-form-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="action" value="increase">
+                                                <button type="submit" class="cart-qty-btn" title="Increase quantity">+</button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <!-- Subtotal -->
+                                    <div class="cart-subtotal-cell">
+                                        <span class="mobile-label">Subtotal:</span>
+                                        <span class="cell-subtotal">₹{{ item.subtotal|floatformat:2 }}</span>
+                                    </div>
+
+                                    <!-- Remove Action -->
+                                    <div class="cart-action-cell">
+                                        <a href="{% url 'remove_from_cart' item.product.id %}" class="remove-cart-item-btn" title="Remove item from cart">
+                                            <span class="remove-icon">🗑️</span>
+                                            <span class="remove-text">Remove</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Table Footer Actions -->
+                        <div class="cart-table-footer-actions">
+                            <a href="{% url 'products' %}" class="btn btn-outline">
+                                <span>← Continue Shopping</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary Column -->
+                <div class="cart-summary-column">
+                    <div class="order-summary-card">
+                        <h2 class="summary-title">Order Summary</h2>
+
+                        <!-- Progress to Free Delivery -->
+                        <div class="free-shipping-progress-box">
+                            {% if subtotal >= free_delivery_threshold %}
+                                <div class="free-shipping-achieved">
+                                    <span class="unlocked-icon">🎉</span>
+                                    <span>You've unlocked <strong>FREE Delivery!</strong></span>
+                                </div>
+                            {% else %}
+                                <div class="free-shipping-needed">
+                                    <span class="locked-icon">🚚</span>
+                                    <span>Add <strong>₹{{ delivery_shortfall|floatformat:2 }}</strong> more for <strong>FREE Delivery</strong></span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Calculation Breakdown -->
+                        <div class="summary-breakdown-list">
+                            <div class="summary-row">
+                                <span class="sum-label">Items Subtotal ({{ item_count }})</span>
+                                <span class="sum-val">₹{{ subtotal|floatformat:2 }}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="sum-label">Estimated Shipping</span>
+                                <span class="sum-val">
+                                    {% if delivery_fee == 0 %}
+                                        <span class="free-delivery-badge">FREE</span>
+                                    {% else %}
+                                        ₹{{ delivery_fee|floatformat:2 }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="summary-row promo-applied-row">
+                                <span class="sum-label">Academic Discount Code</span>
+                                <span class="sum-val promo-tag-text">STUDYSMART (Ready at Checkout)</span>
+                            </div>
+                            <div class="summary-divider"></div>
+                            <div class="summary-row total-row">
+                                <span class="sum-total-label">Total Amount</span>
+                                <span class="sum-total-val">₹{{ total|floatformat:2 }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Promo Code Input -->
+                        <div class="summary-promo-box">
+                            <div class="promo-input-wrap">
+                                <input type="text" placeholder="Enter coupon code (e.g. STUDYSMART)" class="promo-input" value="STUDYSMART">
+                                <button type="button" class="btn btn-primary btn-sm promo-apply-btn">Applied</button>
+                            </div>
+                        </div>
+
+                        <!-- Checkout Button -->
+                        <div class="summary-checkout-action">
+                            <button type="button" class="btn btn-primary btn-lg btn-block checkout-btn" onclick="window.location.href='{% url 'checkout' %}'">
+                                <span>Proceed to Checkout →</span>
+                            </button>
+                            <small class="secure-note">🔒 Guaranteed 256-Bit Encrypted Payment</small>
+                        </div>
+
+                        <!-- Payment & Trust Badges -->
+                        <div class="summary-trust-badges">
+                            <span>UPI</span> • <span>Cards</span> • <span>NetBanking</span> • <span>COD</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Empty Cart State -->
+            <div class="empty-cart-card">
+                <div class="empty-cart-icon-wrap">
+                    <span class="empty-cart-emoji">🛒</span>
+                </div>
+                <h2 class="empty-cart-title">Your SchoolKart Cart is Empty</h2>
+                <p class="empty-cart-desc">
+                    Looks like you haven't added any books, backpacks, uniforms, or stationery supplies yet. Explore our curated collections to get started!
+                </p>
+                <div class="empty-cart-cta-group">
+                    <a href="{% url 'products' %}" class="btn btn-primary btn-lg">
+                        <span>Explore Products 🎒</span>
+                    </a>
+                    <a href="{% url 'home' %}#categories" class="btn btn-outline btn-lg">
+                        <span>Browse Categories</span>
+                    </a>
+                </div>
+
+                <div class="empty-cart-suggestions">
+                    <span class="sugg-heading">Popular Student Categories:</span>
+                    <div class="sugg-pills">
+                        <a href="{% url 'products' %}?category=Books" class="cat-filter-pill">📚 Books</a>
+                        <a href="{% url 'products' %}?category=School Bags" class="cat-filter-pill">🎒 School Bags</a>
+                        <a href="{% url 'products' %}?category=Stationery" class="cat-filter-pill">✏️ Stationery</a>
+                        <a href="{% url 'products' %}?category=School Uniforms" class="cat-filter-pill">👕 School Uniforms</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,409 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}SchoolKart - Shop Smart. Study Better. 🎓{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container hero-container">
+        <div class="hero-content">
+            <div class="hero-badge-pill">
+                <span class="badge-sparkle">✨</span>
+                <span>India's Trusted Online School Store</span>
+            </div>
+            <h1 class="hero-title">
+                Welcome to <span class="gradient-text">SchoolKart</span> 🛒
+            </h1>
+            <h2 class="hero-subtitle">Online School Supplies Store</h2>
+            <p class="hero-tagline">
+                Shop Smart. Study Better. 🎓
+            </p>
+            <p class="hero-description">
+                Equip your academic journey with syllabus-aligned textbooks, durable ergonomic school bags, premium stationery kits, and all-season school uniforms.
+            </p>
+            <div class="hero-cta-group">
+                <a href="{% url 'products' %}" class="btn btn-primary btn-lg pulse-hover">
+                    <span>Shop Now</span>
+                    <span class="btn-arrow">→</span>
+                </a>
+                <a href="#categories" class="btn btn-outline btn-lg">
+                    <span>Explore Categories</span>
+                </a>
+            </div>
+            <div class="hero-stats-row">
+                <div class="stat-item">
+                    <span class="stat-number">50,000+</span>
+                    <span class="stat-label">Happy Students</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number">10,000+</span>
+                    <span class="stat-label">School Products</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Partner Schools</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="hero-card-showcase">
+                <div class="hero-card-floating float-card-1">
+                    <div class="floating-icon">📚</div>
+                    <div class="floating-text">
+                        <strong>New Syllabus Books</strong>
+                        <small>CBSE • ICSE • State Board</small>
+                    </div>
+                </div>
+
+                <div class="hero-card-floating float-card-2">
+                    <div class="floating-icon">🎒</div>
+                    <div class="floating-text">
+                        <strong>Ergonomic School Bags</strong>
+                        <small>Lightweight & Waterproof</small>
+                    </div>
+                </div>
+
+                <div class="hero-main-card">
+                    <div class="showcase-banner">
+                        <span class="offer-tag">🏷️ Special Combo</span>
+                        <h3>Student Starter Kit</h3>
+                        <p>Complete set of essential stationery + notebooks + geometry box</p>
+                    </div>
+                    <div class="showcase-price-row">
+                        <div>
+                            <span class="price-original">₹1,299</span>
+                            <span class="price-current">₹849</span>
+                        </div>
+                        <span class="save-pill">Save 35%</span>
+                    </div>
+                    <a href="{% url 'products' %}" class="btn btn-primary btn-block">Grab Deal 🚀</a>
+                </div>
+
+                <div class="hero-card-floating float-card-3">
+                    <div class="floating-icon">⭐ 4.9/5</div>
+                    <div class="floating-text">
+                        <strong>Parent Satisfaction</strong>
+                        <small>Over 15,000+ Reviews</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trust & Feature Highlights Strip -->
+<section class="trust-strip-section">
+    <div class="container">
+        <div class="trust-grid">
+            <div class="trust-card">
+                <div class="trust-icon-box trust-blue">🚚</div>
+                <div class="trust-text">
+                    <h4>Fast & Free Delivery</h4>
+                    <p>Free doorstep delivery on orders above ₹499</p>
+                </div>
+            </div>
+            <div class="trust-card">
+                <div class="trust-icon-box trust-purple">💯</div>
+                <div class="trust-text">
+                    <h4>100% Genuine Supplies</h4>
+                    <p>Directly sourced from verified school publishers</p>
+                </div>
+            </div>
+            <div class="trust-card">
+                <div class="trust-icon-box trust-pink">🔄</div>
+                <div class="trust-text">
+                    <h4>Easy 7-Day Returns</h4>
+                    <p>Hassle-free replacement for uniforms & items</p>
+                </div>
+            </div>
+            <div class="trust-card">
+                <div class="trust-icon-box trust-teal">🛡️</div>
+                <div class="trust-text">
+                    <h4>Safe & Secure Checkout</h4>
+                    <p>256-bit encrypted payments via UPI & Cards</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section" id="categories">
+    <div class="container">
+        <div class="section-header text-center">
+            <span class="section-badge">Curated Collections</span>
+            <h2 class="section-title">Explore by Category</h2>
+            <p class="section-subtitle">Everything needed for academics, sports, arts, and classroom success</p>
+        </div>
+
+        <div class="category-cards-grid">
+            <!-- Category 1: Books -->
+            <div class="category-card cat-card-purple">
+                <div class="cat-card-header">
+                    <div class="cat-icon-wrapper">
+                        <span class="cat-emoji">📚</span>
+                    </div>
+                    <span class="cat-item-count">Textbooks</span>
+                </div>
+                <div class="cat-card-body">
+                    <h3 class="cat-title">Books</h3>
+                    <p class="cat-description">
+                        School textbooks, reference guides, workbooks, NCERT solutions & competitive exam materials.
+                    </p>
+                    <ul class="cat-features">
+                        <li>✓ NCERT & CBSE Syllabus</li>
+                        <li>✓ ICSE & State Boards</li>
+                        <li>✓ Solved Question Papers</li>
+                    </ul>
+                </div>
+                <div class="cat-card-footer">
+                    <a href="{% url 'products' %}?category=Books" class="cat-action-link">
+                        <span>Browse Books</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 2: School Bags -->
+            <div class="category-card cat-card-pink">
+                <div class="cat-card-header">
+                    <div class="cat-icon-wrapper">
+                        <span class="cat-emoji">🎒</span>
+                    </div>
+                    <span class="cat-item-count">Ergonomic</span>
+                </div>
+                <div class="cat-card-body">
+                    <h3 class="cat-title">School Bags</h3>
+                    <p class="cat-description">
+                        Ergonomic, lightweight, spine-protecting and waterproof backpacks designed specifically for students.
+                    </p>
+                    <ul class="cat-features">
+                        <li>✓ Padded Shoulder Straps</li>
+                        <li>✓ Water-Resistant Fabric</li>
+                        <li>✓ Multiple Utility Pockets</li>
+                    </ul>
+                </div>
+                <div class="cat-card-footer">
+                    <a href="{% url 'products' %}?category=School Bags" class="cat-action-link">
+                        <span>Browse Bags</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 3: Stationery -->
+            <div class="category-card cat-card-blue">
+                <div class="cat-card-header">
+                    <div class="cat-icon-wrapper">
+                        <span class="cat-emoji">✏️</span>
+                    </div>
+                    <span class="cat-item-count">Classroom</span>
+                </div>
+                <div class="cat-card-body">
+                    <h3 class="cat-title">Stationery</h3>
+                    <p class="cat-description">
+                        Pens, pencils, geometry kits, highlighters, notebooks, exam pads, and daily classroom essentials.
+                    </p>
+                    <ul class="cat-features">
+                        <li>✓ Smooth Gel & Ball Pens</li>
+                        <li>✓ Premium Ruled Notebooks</li>
+                        <li>✓ Mathematical Drawing Kits</li>
+                    </ul>
+                </div>
+                <div class="cat-card-footer">
+                    <a href="{% url 'products' %}?category=Stationery" class="cat-action-link">
+                        <span>Browse Stationery</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 4: School Uniforms -->
+            <div class="category-card cat-card-violet">
+                <div class="cat-card-header">
+                    <div class="cat-icon-wrapper">
+                        <span class="cat-emoji">👕</span>
+                    </div>
+                    <span class="cat-item-count">Apparel</span>
+                </div>
+                <div class="cat-card-body">
+                    <h3 class="cat-title">School Uniforms</h3>
+                    <p class="cat-description">
+                        Durable, breathable fabrics tailored for regular school days, house uniforms, belts, socks & ties.
+                    </p>
+                    <ul class="cat-features">
+                        <li>✓ All-Weather Breathable Cotton</li>
+                        <li>✓ House Sports Uniforms</li>
+                        <li>✓ Custom Fit Sizing</li>
+                    </ul>
+                </div>
+                <div class="cat-card-footer">
+                    <a href="{% url 'products' %}?category=School Uniforms" class="cat-action-link">
+                        <span>Browse Uniforms</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category 5: School Accessories -->
+            <div class="category-card cat-card-cyan">
+                <div class="cat-card-header">
+                    <div class="cat-icon-wrapper">
+                        <span class="cat-emoji">🎨</span>
+                    </div>
+                    <span class="cat-item-count">Essentials</span>
+                </div>
+                <div class="cat-card-body">
+                    <h3 class="cat-title">School Accessories</h3>
+                    <p class="cat-description">
+                        Insulated water bottles, leakproof lunch boxes, art & craft supplies, pencil cases & desk organizers.
+                    </p>
+                    <ul class="cat-features">
+                        <li>✓ Stainless Steel Lunch Sets</li>
+                        <li>✓ BPA-Free Insulated Flasks</li>
+                        <li>✓ Professional Art Supplies</li>
+                    </ul>
+                </div>
+                <div class="cat-card-footer">
+                    <a href="{% url 'products' %}?category=School Accessories" class="cat-action-link">
+                        <span>Browse Accessories</span>
+                        <span class="link-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="products-section" id="products">
+    <div class="container">
+        <div class="section-header-flex">
+            <div>
+                <span class="section-badge">Student Favorites</span>
+                <h2 class="section-title">Popular School Products</h2>
+                <p class="section-subtitle">Handpicked essentials loved by parents, teachers, and students</p>
+            </div>
+            <div>
+                <a href="{% url 'products' %}" class="btn btn-outline btn-sm">View All Products →</a>
+            </div>
+        </div>
+
+        <div class="products-grid">
+            {% for product in products %}
+                <div class="product-card">
+                    <div class="product-card-top 
+                        {% if 'book' in product.category.name|lower %}cat-bg-purple
+                        {% elif 'bag' in product.category.name|lower %}cat-bg-pink
+                        {% elif 'stationery' in product.category.name|lower %}cat-bg-blue
+                        {% elif 'uniform' in product.category.name|lower %}cat-bg-violet
+                        {% else %}cat-bg-cyan{% endif %}">
+                        
+                        <span class="product-badge">{{ product.category.name|default:"School Essential" }}</span>
+                        
+                        <a href="{% url 'product_detail' product.id %}">
+                            <span class="product-icon-display">
+                                {% if 'book' in product.category.name|lower %}📚
+                                {% elif 'bag' in product.category.name|lower %}🎒
+                                {% elif 'stationery' in product.category.name|lower %}✏️
+                                {% elif 'uniform' in product.category.name|lower %}👕
+                                {% elif 'access' in product.category.name|lower %}🎨
+                                {% else %}📦{% endif %}
+                            </span>
+                        </a>
+                    </div>
+                    <div class="product-card-info">
+                        <span class="product-category-label">{{ product.category.name }}</span>
+                        <h3 class="product-title">
+                            <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+                        </h3>
+                        <p class="product-description">{{ product.description|truncatewords:14 }}</p>
+                        
+                        <div class="product-card-action">
+                            <div class="product-price">₹{{ product.price }}</div>
+                            <form action="{% url 'add_to_cart' product.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-primary btn-sm add-cart-btn" {% if product.stock == 0 %}disabled{% endif %}>
+                                    🛒 Add
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-products-found-card" style="grid-column: 1 / -1;">
+                    <p>Visit our <a href="{% url 'products' %}"><strong>Products Catalog</strong></a> to explore all school supplies!</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose SchoolKart Banner -->
+<section class="why-us-section">
+    <div class="container">
+        <div class="why-us-box">
+            <div class="why-us-content">
+                <span class="section-badge-light">Why Parents Trust Us</span>
+                <h2 class="why-us-title">The Smarter Way to Prepare for School 🎓</h2>
+                <p class="why-us-text">
+                    No more waiting in long bookstore queues or rushing across markets. SchoolKart brings verified school supplies right to your doorstep with guaranteed syllabus accuracy and school-approved uniforms.
+                </p>
+                <div class="why-us-perks-grid">
+                    <div class="perk-item">
+                        <span class="perk-icon">📋</span>
+                        <div>
+                            <strong>School List Upload</strong>
+                            <p>Upload your school supply checklist for 1-click ordering</p>
+                        </div>
+                    </div>
+                    <div class="perk-item">
+                        <span class="perk-icon">🏷️</span>
+                        <div>
+                            <strong>Direct Publisher Pricing</strong>
+                            <p>Save up to 30% on books & stationery bundles</p>
+                        </div>
+                    </div>
+                    <div class="perk-item">
+                        <span class="perk-icon">⚡</span>
+                        <div>
+                            <strong>Express School Reopening Delivery</strong>
+                            <p>Guaranteed on-time delivery before session begins</p>
+                        </div>
+                    </div>
+                    <div class="perk-item">
+                        <span class="perk-icon">🛡️</span>
+                        <div>
+                            <strong>Durable Student Tested</strong>
+                            <p>Tested materials built to survive active school days</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reopening Newsletter Section -->
+<section class="newsletter-section">
+    <div class="container">
+        <div class="newsletter-card">
+            <div class="newsletter-content">
+                <span class="newsletter-emoji">📬</span>
+                <h2 class="newsletter-title">Get School Reopening Discounts!</h2>
+                <p class="newsletter-subtitle">Join 25,000+ parents who receive textbook alerts, uniform size guides, and exclusive discount coupons.</p>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="Enter your email address..." class="newsletter-input" aria-label="Email address">
+                    <button type="button" class="btn btn-primary newsletter-btn">Subscribe Free 🚀</button>
+                </div>
+                <small class="newsletter-footnote">🔒 We value your privacy. No spam, unsubscribe anytime.</small>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

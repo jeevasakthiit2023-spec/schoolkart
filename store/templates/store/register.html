@@ -1,0 +1,84 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Create Student Account - SchoolKart 🎓{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-card-container">
+            <div class="auth-card">
+                <!-- Card Header -->
+                <div class="auth-card-header">
+                    <div class="auth-icon-wrap">
+                        <span class="auth-emoji">🎒</span>
+                    </div>
+                    <h1 class="auth-title">Create Account</h1>
+                    <p class="auth-subtitle">Join thousands of students and parents shopping smart on SchoolKart</p>
+                </div>
+
+                <!-- Register Form -->
+                <form action="{% url 'register' %}" method="POST" class="auth-form">
+                    {% csrf_token %}
+                    {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                    {% endif %}
+
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label for="reg-username" class="form-label">Username</label>
+                        <div class="input-icon-wrap">
+                            <span class="field-icon">👤</span>
+                            <input type="text" name="username" id="reg-username" value="{{ username|default:'' }}" required placeholder="Choose a student username" class="form-input" autocomplete="username">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="reg-email" class="form-label">Email Address</label>
+                        <div class="input-icon-wrap">
+                            <span class="field-icon">✉️</span>
+                            <input type="email" name="email" id="reg-email" value="{{ email|default:'' }}" required placeholder="parent or student email" class="form-input" autocomplete="email">
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="reg-password" class="form-label">Password</label>
+                        <div class="input-icon-wrap">
+                            <span class="field-icon">🔒</span>
+                            <input type="password" name="password" id="reg-password" required placeholder="Create a secure password" class="form-input" autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                        <label for="reg-confirm-password" class="form-label">Confirm Password</label>
+                        <div class="input-icon-wrap">
+                            <span class="field-icon">🔑</span>
+                            <input type="password" name="confirm_password" id="reg-confirm-password" required placeholder="Re-enter your password" class="form-input" autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-lg btn-block auth-submit-btn">
+                        <span>Create My Account 🚀</span>
+                    </button>
+                </form>
+
+                <!-- Card Footer / Switch -->
+                <div class="auth-card-footer">
+                    <p>Already have a SchoolKart account? <a href="{% url 'login' %}{% if next %}?next={{ next }}{% endif %}" class="auth-switch-link">Log In here →</a></p>
+                </div>
+
+                <!-- Trust Perks Pill List -->
+                <div class="auth-perks-row">
+                    <span>✨ 1-Click Order Tracking</span>
+                    <span>🏷️ Student Discounts</span>
+                    <span>📚 Board Syllabus Alerts</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

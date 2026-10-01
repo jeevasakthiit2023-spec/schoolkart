@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SchoolKart - Shop Smart. Study Better.{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{% static 'store/style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Top Announcement Bar -->
+    <div class="top-announcement-bar">
+        <div class="container announcement-content">
+            <span class="announcement-badge">🎒 Back to School 2026</span>
+            <span class="announcement-text">Special Offer: Free delivery on all school orders above ₹499 with code <strong>STUDYSMART</strong></span>
+            <span class="announcement-contact">📞 Support: 1800-SCHOOL-KART</span>
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <header class="site-header">
+        <div class="container nav-container">
+            <!-- Brand Logo -->
+            <a href="{% url 'home' %}" class="brand-logo" id="nav-brand">
+                <div class="logo-icon-wrap">
+                    <span class="logo-cart">🛒</span>
+                </div>
+                <div class="brand-text-wrap">
+                    <span class="brand-name">SchoolKart</span>
+                    <span class="brand-tagline">Shop Smart. Study Better.</span>
+                </div>
+            </a>
+
+            <!-- Quick Search Form -->
+            <form action="{% url 'products' %}" method="GET" class="nav-search-bar" role="search">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="q" value="{{ search_query|default:'' }}" placeholder="Search books, bags, stationery, uniforms..." aria-label="Search school supplies">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+
+            <!-- Navigation Links -->
+            <nav class="main-nav" id="main-nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="{% url 'home' %}" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a></li>
+                    <li class="nav-item"><a href="{% url 'products' %}" class="nav-link {% if '/products/' in request.path or '/product/' in request.path %}active{% endif %}">Products</a></li>
+                    <li class="nav-item"><a href="{% url 'cart' %}" class="nav-link cart-link {% if '/cart/' in request.path %}active{% endif %}">
+                        <span class="cart-label">Cart</span>
+                        <span class="cart-badge">🛒 {{ cart_item_count|default:0 }}</span>
+                    </a></li>
+                    
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a href="{% url 'orders' %}" class="nav-link {% if '/orders/' in request.path %}active{% endif %}">My Orders</a></li>
+                        <li class="nav-item user-profile-item">
+                            <span class="user-greeting">👋 Hi, {{ user.username }}</span>
+                        </li>
+                        <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link auth-btn logout-btn">Logout</a></li>
+                    {% else %}
+                        <li class="nav-item"><a href="{% url 'login' %}" class="nav-link auth-btn login-btn {% if '/login/' in request.path %}active{% endif %}">Login</a></li>
+                        <li class="nav-item"><a href="{% url 'register' %}" class="nav-link auth-btn register-btn {% if '/register/' in request.path %}active{% endif %}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Django Messages Alert Notifications -->
+    {% if messages %}
+        <div class="messages-container container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }}">
+                    <span class="alert-icon">
+                        {% if message.tags == 'success' %}✓
+                        {% elif message.tags == 'warning' %}⚠️
+                        {% elif message.tags == 'error' %}✕
+                        {% else %}ℹ️{% endif %}
+                    </span>
+                    <span class="alert-text">{{ message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col footer-brand-col">
+                    <div class="footer-brand">
+                        <span class="logo-cart">🛒</span>
+                        <span class="brand-name">SchoolKart</span>
+                    </div>
+                    <p class="footer-tagline-highlight">Shop Smart. Study Better. 🎓</p>
+                    <p class="footer-description">
+                        Your trusted one-stop destination for quality school books, ergonomic backpacks, premium stationery, comfortable uniforms, and creative art supplies.
+                    </p>
+                    <div class="footer-badges">
+                        <span class="f-badge">✨ 100% Genuine</span>
+                        <span class="f-badge">🚚 Fast Delivery</span>
+                        <span class="f-badge">🔒 Secure Checkout</span>
+                    </div>
+                </div>
+
+                <!-- Quick Categories -->
+                <div class="footer-col">
+                    <h3 class="footer-heading">Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'products' %}?category=Books">📚 Books & Guides</a></li>
+                        <li><a href="{% url 'products' %}?category=School Bags">🎒 School Bags</a></li>
+                        <li><a href="{% url 'products' %}?category=Stationery">✏️ Stationery</a></li>
+                        <li><a href="{% url 'products' %}?category=School Uniforms">👕 School Uniforms</a></li>
+                        <li><a href="{% url 'products' %}?category=School Accessories">🎨 School Accessories</a></li>
+                    </ul>
+                </div>
+
+                <!-- Customer Care -->
+                <div class="footer-col">
+                    <h3 class="footer-heading">Customer Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'cart' %}">🛒 View My Cart</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'orders' %}">📦 My Orders & Tracking</a></li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}?next={% url 'orders' %}">📦 Track My Order</a></li>
+                        {% endif %}
+                        <li><a href="#help">🔄 Easy Returns Policy</a></li>
+                        <li><a href="#shipping">🚚 Shipping Guidelines</a></li>
+                        <li><a href="#contact">📞 Help & Support</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="footer-col">
+                    <h3 class="footer-heading">Get in Touch</h3>
+                    <ul class="footer-contact-list">
+                        <li>📍 <strong>Campus Office:</strong> 123 Education Boulevard</li>
+                        <li>📞 <strong>Helpline:</strong> 1800-SCHOOL-KART</li>
+                        <li>✉️ <strong>Email:</strong> support@schoolkart.com</li>
+                        <li>⏰ <strong>Hours:</strong> Mon - Sat: 8:00 AM - 8:00 PM</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom Bar -->
+            <div class="footer-bottom-bar">
+                <p class="copyright-text">&copy; 2026 SchoolKart. All Rights Reserved.</p>
+                <p class="footer-bottom-tagline">Shop Smart. Study Better. 🎓</p>
+                <div class="payment-methods-text">
+                    <span>UPI • Debit & Credit Cards • Net Banking • Cash on Delivery</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

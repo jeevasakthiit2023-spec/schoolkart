@@ -1,0 +1,197 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Checkout - SchoolKart 🛒{% endblock %}
+
+{% block content %}
+<!-- Checkout Header Banner -->
+<section class="checkout-banner-section">
+    <div class="container">
+        <div class="breadcrumb-trail">
+            <a href="{% url 'home' %}">Home</a>
+            <span class="bc-sep">/</span>
+            <a href="{% url 'cart' %}">Cart</a>
+            <span class="bc-sep">/</span>
+            <span class="bc-current">Secure Checkout</span>
+        </div>
+        <h1 class="checkout-page-title">
+            Secure <span class="gradient-text">Checkout</span> 🔒
+        </h1>
+        <p class="checkout-page-subtitle">
+            Provide your school delivery address and confirm your academic supply order.
+        </p>
+    </div>
+</section>
+
+<!-- Checkout Main Section -->
+<section class="checkout-main-section">
+    <div class="container">
+        <div class="checkout-layout-grid">
+            <!-- Left: Shipping Address & Payment Form -->
+            <div class="checkout-form-column">
+                <div class="checkout-card">
+                    <div class="checkout-step-header">
+                        <span class="step-badge">1</span>
+                        <h2 class="step-title">Student / Delivery Address</h2>
+                    </div>
+
+                    <form action="{% url 'checkout' %}" method="POST" id="checkout-form">
+                        {% csrf_token %}
+                        
+                        <div class="form-grid-2">
+                            <!-- Full Name -->
+                            <div class="form-group">
+                                <label for="full_name" class="form-label">Student / Parent Full Name *</label>
+                                <input type="text" name="full_name" id="full_name" required placeholder="e.g. Ramesh Sharma" class="form-input" value="{{ form_data.full_name|default:user.get_full_name|default:user.username }}">
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="form-group">
+                                <label for="phone_number" class="form-label">Phone Number *</label>
+                                <input type="tel" name="phone_number" id="phone_number" required placeholder="e.g. +91 98765 43210" class="form-input" value="{{ form_data.phone_number|default:'' }}">
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="form-group">
+                            <label for="address" class="form-label">Street Address / House No / Apartment *</label>
+                            <textarea name="address" id="address" required rows="3" placeholder="Enter complete doorstep delivery address" class="form-input form-textarea">{{ form_data.address|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-grid-3">
+                            <!-- City -->
+                            <div class="form-group">
+                                <label for="city" class="form-label">City *</label>
+                                <input type="text" name="city" id="city" required placeholder="e.g. New Delhi" class="form-input" value="{{ form_data.city|default:'' }}">
+                            </div>
+
+                            <!-- State -->
+                            <div class="form-group">
+                                <label for="state" class="form-label">State *</label>
+                                <input type="text" name="state" id="state" required placeholder="e.g. Delhi" class="form-input" value="{{ form_data.state|default:'' }}">
+                            </div>
+
+                            <!-- Pincode -->
+                            <div class="form-group">
+                                <label for="pincode" class="form-label">Pincode *</label>
+                                <input type="text" name="pincode" id="pincode" required placeholder="e.g. 110001" class="form-input" value="{{ form_data.pincode|default:'' }}">
+                            </div>
+                        </div>
+
+                        <!-- Payment Method Selector -->
+                        <div class="payment-method-section">
+                            <div class="checkout-step-header" style="margin-top: 24px; margin-bottom: 16px;">
+                                <span class="step-badge">2</span>
+                                <h3 class="step-title">Select Payment Method</h3>
+                            </div>
+
+                            <div class="payment-options-grid">
+                                <label class="payment-option-card active">
+                                    <input type="radio" name="payment_mode" value="cod" checked>
+                                    <div class="pay-option-content">
+                                        <span class="pay-icon">💵</span>
+                                        <div>
+                                            <strong>Cash / Pay on Delivery</strong>
+                                            <small>Pay with cash or UPI upon doorstep delivery</small>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="payment-option-card">
+                                    <input type="radio" name="payment_mode" value="upi">
+                                    <div class="pay-option-content">
+                                        <span class="pay-icon">📱</span>
+                                        <div>
+                                            <strong>UPI / GooglePay / PhonePe</strong>
+                                            <small>Instant scan & pay</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Order Button -->
+                        <div class="place-order-action-wrap">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block place-order-btn">
+                                <span>Complete & Place Order 🛒</span>
+                            </button>
+                            <small class="secure-checkout-text">🔒 100% Safe Academic Checkout • 7-Day Replacement Guarantee</small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right: Order Items Summary Sidebar -->
+            <div class="checkout-summary-column">
+                <div class="checkout-summary-card">
+                    <h2 class="summary-title">Order Items ({{ cart_items|length }})</h2>
+
+                    <div class="checkout-items-list">
+                        {% for item in cart_items %}
+                            <div class="checkout-item-row">
+                                <div class="chk-item-thumb 
+                                    {% if 'book' in item.product.category.name|lower %}cat-bg-purple
+                                    {% elif 'bag' in item.product.category.name|lower %}cat-bg-pink
+                                    {% elif 'stationery' in item.product.category.name|lower %}cat-bg-blue
+                                    {% elif 'uniform' in item.product.category.name|lower %}cat-bg-violet
+                                    {% else %}cat-bg-cyan{% endif %}">
+                                    
+                                    {% if 'book' in item.product.category.name|lower %}📚
+                                    {% elif 'bag' in item.product.category.name|lower %}🎒
+                                    {% elif 'stationery' in item.product.category.name|lower %}✏️
+                                    {% elif 'uniform' in item.product.category.name|lower %}👕
+                                    {% elif 'access' in item.product.category.name|lower %}🎨
+                                    {% else %}📦{% endif %}
+                                </div>
+
+                                <div class="chk-item-details">
+                                    <h4 class="chk-item-name">{{ item.product.name }}</h4>
+                                    <span class="chk-item-meta">Qty: {{ item.quantity }} × ₹{{ item.product.price }}</span>
+                                </div>
+
+                                <div class="chk-item-subtotal">
+                                    <span>₹{{ item.subtotal|floatformat:2 }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <!-- Calculations Breakdown -->
+                    <div class="summary-breakdown-list">
+                        <div class="summary-row">
+                            <span class="sum-label">Items Subtotal</span>
+                            <span class="sum-val">₹{{ subtotal|floatformat:2 }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="sum-label">Delivery Shipping</span>
+                            <span class="sum-val">
+                                {% if delivery_fee == 0 %}
+                                    <span class="free-delivery-badge">FREE</span>
+                                {% else %}
+                                    ₹{{ delivery_fee|floatformat:2 }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="sum-label">Applied Promo</span>
+                            <span class="sum-val promo-tag-text">STUDYSMART</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row total-row">
+                            <span class="sum-total-label">Grand Total</span>
+                            <span class="sum-total-val">₹{{ total|floatformat:2 }}</span>
+                        </div>
+                    </div>
+
+                    <div class="checkout-trust-box">
+                        <p>📦 <strong>Guaranteed School Delivery</strong></p>
+                        <small>Directly packaged in protective waterproof academic packaging.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

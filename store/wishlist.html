@@ -1,0 +1,49 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+
+<h1>❤️ My Wishlist</h1>
+
+{% if wishlist_items %}
+
+<div class="product-grid">
+
+    {% for item in wishlist_items %}
+
+    <div class="product-card">
+
+        <h2>{{ item.product.name }}</h2>
+
+        <p>Category: {{ item.product.category.name }}</p>
+
+        <p>Price: ₹{{ item.product.price }}</p>
+
+        <p>{{ item.product.description }}</p>
+
+        <a href="{% url 'product_detail' item.product.id %}">
+            View Product
+        </a>
+
+        <br><br>
+
+        <a href="{% url 'remove_from_wishlist' item.product.id %}">
+            ❌ Remove
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<h3>Your wishlist is empty ❤️</h3>
+
+<a href="{% url 'products' %}">
+    Continue Shopping
+</a>
+
+{% endif %}
+
+{% endblock %}

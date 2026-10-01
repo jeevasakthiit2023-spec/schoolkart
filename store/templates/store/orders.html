@@ -1,0 +1,134 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}My Orders - SchoolKart 🛒{% endblock %}
+
+{% block content %}
+<!-- Orders Banner -->
+<section class="orders-banner-section">
+    <div class="container">
+        <div class="breadcrumb-trail">
+            <a href="{% url 'home' %}">Home</a>
+            <span class="bc-sep">/</span>
+            <span class="bc-current">My Orders</span>
+        </div>
+        <h1 class="orders-page-title">
+            My <span class="gradient-text">Orders</span> 📦
+        </h1>
+        <p class="orders-page-subtitle">
+            Track your school supply shipments, view itemized receipts, and manage deliveries.
+        </p>
+    </div>
+</section>
+
+<!-- Orders Main Section -->
+<section class="orders-main-section">
+    <div class="container">
+        {% if orders %}
+            <div class="orders-list-wrap">
+                {% for order in orders %}
+                    <div class="order-card">
+                        <!-- Order Card Top Bar -->
+                        <div class="order-card-header">
+                            <div class="order-header-left">
+                                <div class="order-id-badge">
+                                    <span class="order-hash">#</span>
+                                    <span class="order-num">Order {{ order.id }}</span>
+                                </div>
+                                <span class="order-date-text">📅 Placed on {{ order.created_at|date:"F d, Y - h:i A" }}</span>
+                            </div>
+
+                            <div class="order-header-right">
+                                <div class="order-status-pill 
+                                    {% if order.status == 'Confirmed' %}status-confirmed
+                                    {% elif order.status == 'Dispatched' %}status-dispatched
+                                    {% elif order.status == 'Delivered' %}status-delivered
+                                    {% else %}status-processing{% endif %}">
+                                    <span class="status-indicator-dot"></span>
+                                    <span>{{ order.status }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Card Body: Items -->
+                        <div class="order-card-body">
+                            <div class="order-items-grid">
+                                {% for item in order.items.all %}
+                                    <div class="order-item-tile">
+                                        <div class="order-item-icon 
+                                            {% if item.product and 'book' in item.product.category.name|lower %}cat-bg-purple
+                                            {% elif item.product and 'bag' in item.product.category.name|lower %}cat-bg-pink
+                                            {% elif item.product and 'stationery' in item.product.category.name|lower %}cat-bg-blue
+                                            {% elif item.product and 'uniform' in item.product.category.name|lower %}cat-bg-violet
+                                            {% else %}cat-bg-cyan{% endif %}">
+                                            
+                                            {% if item.product and 'book' in item.product.category.name|lower %}📚
+                                            {% elif item.product and 'bag' in item.product.category.name|lower %}🎒
+                                            {% elif item.product and 'stationery' in item.product.category.name|lower %}✏️
+                                            {% elif item.product and 'uniform' in item.product.category.name|lower %}👕
+                                            {% elif item.product and 'access' in item.product.category.name|lower %}🎨
+                                            {% else %}📦{% endif %}
+                                        </div>
+
+                                        <div class="order-item-details">
+                                            <h4 class="order-item-title">
+                                                {% if item.product %}
+                                                    <a href="{% url 'product_detail' item.product.id %}">{{ item.product_name }}</a>
+                                                {% else %}
+                                                    {{ item.product_name }}
+                                                {% endif %}
+                                            </h4>
+                                            <span class="order-item-unit-qty">
+                                                Quantity: <strong>{{ item.quantity }}</strong> × ₹{{ item.price }}
+                                            </span>
+                                        </div>
+
+                                        <div class="order-item-price-col">
+                                            <span class="order-item-subtotal">₹{{ item.subtotal|floatformat:2 }}</span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Order Card Footer -->
+                        <div class="order-card-footer">
+                            <div class="order-delivery-address-snippet">
+                                <span class="addr-label">📍 Delivery Address:</span>
+                                <span class="addr-val">{{ order.full_name }}, {{ order.address }}, {{ order.city }}, {{ order.state }} - {{ order.pincode }} (📞 {{ order.phone_number }})</span>
+                            </div>
+
+                            <div class="order-total-action-group">
+                                <div class="order-total-box">
+                                    <span class="total-label">Total Amount:</span>
+                                    <span class="total-amount-val">₹{{ order.total_amount }}</span>
+                                </div>
+                                <a href="{% url 'products' %}" class="btn btn-outline btn-sm">
+                                    <span>Shop More 🎒</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- No Orders Found View -->
+            <div class="empty-orders-card">
+                <div class="empty-orders-icon">📦</div>
+                <h2 class="empty-orders-title">No Orders Yet!</h2>
+                <p class="empty-orders-desc">
+                    You haven't placed any school supply orders with SchoolKart yet. Browse our comprehensive catalog to get textbooks, bags, stationery, and uniforms delivered to your doorstep.
+                </p>
+                <div class="empty-orders-cta">
+                    <a href="{% url 'products' %}" class="btn btn-primary btn-lg">
+                        <span>Explore Products Catalog 🚀</span>
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-outline btn-lg">
+                        <span>Return to Home</span>
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

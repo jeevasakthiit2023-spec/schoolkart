@@ -1,0 +1,218 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}School Products & Supplies - SchoolKart 🛒{% endblock %}
+
+{% block content %}
+<!-- Products Header Banner -->
+<section class="products-banner-section">
+    <div class="container">
+        <div class="products-header-wrap">
+            <div class="breadcrumb-trail">
+                <a href="{% url 'home' %}">Home</a>
+                <span class="bc-sep">/</span>
+                <span class="bc-current">Products</span>
+                {% if selected_category %}
+                    <span class="bc-sep">/</span>
+                    <span class="bc-category-tag">{{ selected_category }}</span>
+                {% endif %}
+            </div>
+            <h1 class="products-page-title">
+                School <span class="gradient-text">Supplies & Products</span> 🎒
+            </h1>
+            <p class="products-page-subtitle">
+                Explore our curated catalog of syllabus textbooks, ergonomic backpacks, premium stationery, and durable uniforms.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Filter, Search & Controls Bar -->
+<section class="catalog-controls-section">
+    <div class="container">
+        <div class="catalog-toolbar">
+            <!-- Search & Quick Filter Form -->
+            <form action="{% url 'products' %}" method="GET" class="catalog-search-form">
+                {% if selected_category %}
+                    <input type="hidden" name="category" value="{{ selected_category }}">
+                {% endif %}
+                <div class="catalog-search-box">
+                    <span class="catalog-search-icon">🔍</span>
+                    <input type="text" name="q" value="{{ search_query }}" placeholder="Search by product name, category, or keyword..." aria-label="Search products">
+                    {% if search_query %}
+                        <a href="{% url 'products' %}{% if selected_category %}?category={{ selected_category }}{% endif %}" class="clear-search-btn" title="Clear search">✕</a>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary btn-sm search-submit-btn">Filter</button>
+                </div>
+            </form>
+
+            <!-- Sorting & Count Stats -->
+            <div class="catalog-stats-sort">
+                <div class="product-count-badge">
+                    <span>Showing <strong>{{ product_count }}</strong> {% if product_count == 1 %}Product{% else %}Products{% endif %}</span>
+                </div>
+                
+                <form action="{% url 'products' %}" method="GET" class="sort-form">
+                    {% if selected_category %}
+                        <input type="hidden" name="category" value="{{ selected_category }}">
+                    {% endif %}
+                    {% if search_query %}
+                        <input type="hidden" name="q" value="{{ search_query }}">
+                    {% endif %}
+                    <label for="sort-select" class="sort-label">Sort by:</label>
+                    <select name="sort" id="sort-select" class="sort-select" onchange="this.form.submit()">
+                        <option value="" {% if not sort_by %}selected{% endif %}>Featured</option>
+                        <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Product Name</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="category-filter-bar">
+            <span class="filter-bar-label">Filter Category:</span>
+            <div class="category-pills-list">
+                <a href="{% url 'products' %}{% if search_query %}?q={{ search_query }}{% endif %}" 
+                   class="cat-filter-pill {% if not selected_category %}active{% endif %}">
+                    <span>✨ All Products</span>
+                </a>
+
+                {% if categories %}
+                    {% for cat in categories %}
+                        <a href="{% url 'products' %}?category={{ cat.name }}{% if search_query %}&q={{ search_query }}{% endif %}" 
+                           class="cat-filter-pill {% if selected_category == cat.name or selected_category == cat.id|stringformat:'s' %}active{% endif %}">
+                            <span>
+                                {% if "book" in cat.name|lower %}📚{% elif "bag" in cat.name|lower %}🎒{% elif "stationery" in cat.name|lower %}✏️{% elif "uniform" in cat.name|lower %}👕{% elif "access" in cat.name|lower %}🎨{% else %}🏷️{% endif %}
+                                {{ cat.name }}
+                            </span>
+                        </a>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Product Grid Section -->
+<section class="products-grid-section">
+    <div class="container">
+        {% if products %}
+            <div class="products-cards-grid">
+                {% for product in products %}
+                    <div class="product-item-card">
+                        <div class="product-item-top 
+                            {% if product.category and 'book' in product.category.name|lower %}cat-bg-purple
+                            {% elif product.category and 'bag' in product.category.name|lower %}cat-bg-pink
+                            {% elif product.category and 'stationery' in product.category.name|lower %}cat-bg-blue
+                            {% elif product.category and 'uniform' in product.category.name|lower %}cat-bg-violet
+                            {% else %}cat-bg-cyan{% endif %}">
+                            
+                            <span class="product-item-category">
+                                {{ product.category.name|default:"School Supply" }}
+                            </span>
+                            
+                            <a href="{% url 'product_detail' product.id %}" class="product-item-icon-link">
+                                <div class="product-item-icon">
+                                    {% if product.category and 'book' in product.category.name|lower %}📚
+                                    {% elif product.category and 'bag' in product.category.name|lower %}🎒
+                                    {% elif product.category and 'stationery' in product.category.name|lower %}✏️
+                                    {% elif product.category and 'uniform' in product.category.name|lower %}👕
+                                    {% elif product.category and 'access' in product.category.name|lower %}🎨
+                                    {% else %}📦{% endif %}
+                                </div>
+                            </a>
+
+                            {% if product.stock > 0 %}
+                                <span class="stock-tag in-stock">In Stock</span>
+                            {% else %}
+                                <span class="stock-tag out-of-stock">Out of Stock</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="product-item-body">
+                            <h3 class="product-item-title">
+                                <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+                            </h3>
+                            <p class="product-item-desc">{{ product.description }}</p>
+
+                            <div class="product-item-meta">
+                                <div class="stock-info">
+                                    <span class="stock-indicator {% if product.stock > 0 %}stock-green{% else %}stock-red{% endif %}"></span>
+                                    <span>
+                                        {% if product.stock > 0 %}
+                                            <strong>{{ product.stock }}</strong> units available
+                                        {% else %}
+                                            Currently unavailable
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="product-item-footer">
+                                <div class="product-price-box">
+                                    <span class="price-currency">₹</span>
+                                    <span class="price-value">{{ product.price }}</span>
+                                </div>
+                                
+                                <form action="{% url 'add_to_cart' product.id %}" method="POST" class="add-cart-form-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-primary btn-sm add-cart-action-btn" {% if product.stock == 0 %}disabled{% endif %}>
+                                        <span>🛒 Add</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- No search/filter match empty state -->
+            <div class="no-products-found-card">
+                <div class="empty-state-icon">🔍</div>
+                <h3 class="empty-state-title">No Matching Products Found</h3>
+                <p class="empty-state-text">
+                    {% if search_query or selected_category %}
+                        We couldn't find any school products matching <strong>"{{ search_query|default:selected_category }}"</strong>.
+                    {% else %}
+                        No products are currently available in this catalog.
+                    {% endif %}
+                </p>
+                <div class="empty-state-actions">
+                    <a href="{% url 'products' %}" class="btn btn-primary">
+                        <span>Clear All Filters</span>
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-outline">
+                        <span>Return to Home</span>
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- School Booklist Assistance Banner -->
+<section class="bulk-order-banner-section">
+    <div class="container">
+        <div class="bulk-order-card">
+            <div class="bulk-order-info">
+                <span class="badge-sparkle-light">📚 Parent & School Service</span>
+                <h2 class="bulk-title">Have a School Supply Checklist?</h2>
+                <p class="bulk-desc">
+                    Send us your school's prescribed booklist or stationery requirements. We bundle everything accurately and ship it directly to your address.
+                </p>
+                <div class="bulk-features-list">
+                    <span>✓ 100% Board Syllabus Accuracy</span>
+                    <span>✓ Uniform Sizing Support</span>
+                    <span>✓ Doorstep Bulk Delivery</span>
+                </div>
+            </div>
+            <div class="bulk-order-action">
+                <a href="#contact" class="btn btn-primary btn-lg">Request Custom Bundle 📝</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
